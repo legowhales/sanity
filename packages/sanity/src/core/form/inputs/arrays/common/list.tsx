@@ -1,39 +1,98 @@
-import {Card, Grid, Theme} from '@sanity/ui'
+import {Box, Grid} from '@sanity/ui'
 import React, {ComponentProps, useCallback} from 'react'
-import styled from 'styled-components'
-import {MOVING_ITEM_CLASS_NAME, sortableItem, sortableList} from './sortable'
+import styled, {css} from 'styled-components'
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import {CSS} from '@dnd-kit/utilities'
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+  restrictToWindowEdges,
+} from '@dnd-kit/modifiers'
+import {SortableItemIdContext} from './DragHandle'
 
-const ListItem = styled(Card)`
-  &.${MOVING_ITEM_CLASS_NAME} {
-    z-index: 10000;
-    border-radius: ${({theme}) => theme.sanity.radius[2]}px;
-    box-shadow: 0 0 0 0, 0 8px 17px 2px var(--card-shadow-umbra-color),
-      0 3px 14px 2px var(--card-shadow-penumbra-color),
-      0 5px 5px -3px var(--card-shadow-ambient-color);
-
-    // Used inside CellItem
-    [data-ui='DragHandleCard'] {
-      opacity: 1;
-    }
-
-    [data-ui='DragHandleButton'] {
-      background-color: ${({theme}: {theme: Theme}) =>
-        theme.sanity.color.button.bleed.primary.pressed.bg};
-      color: ${({theme}: {theme: Theme}) => theme.sanity.color.button.bleed.primary.pressed.fg};
-      [data-ui='Text'] {
-        color: inherit;
-      }
-    }
-  }
+const ListItem = styled(Box)<ComponentProps<typeof Box> & {active?: boolean}>`
+  ${(props) =>
+    props.active
+      ? css`
+          z-index: 10000;
+          /* todo: this requires items to add this attr. Check if there's a better way */
+          [data-ui='Item'] {
+            box-shadow: 0 0 0 0, 0 8px 17px 2px var(--card-shadow-umbra-color),
+              0 3px 14px 2px var(--card-shadow-penumbra-color),
+              0 5px 5px -3px var(--card-shadow-ambient-color);
+          }
+        `
+      : ''}
 `
 
-const SortableList = sortableList(Grid)
-const SortableListItem = sortableItem(ListItem)
+function SortableList(props: ListProps) {
+  const {items, sortable, lockAxis, axis, onItemMove, children, ...rest} = props
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  )
+
+  function handleDragEnd(event: DragEndEvent) {
+    const {active, over} = event
+
+    if (active.id !== over?.id) {
+      props.onItemMove?.({
+        fromIndex: props.items.indexOf(active.id as string),
+        toIndex: props.items.indexOf(over?.id as string),
+      })
+    }
+  }
+  return (
+    <DndContext
+      sensors={sensors}
+      modifiers={[restrictToVerticalAxis, restrictToWindowEdges, restrictToParentElement]}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={props.items} strategy={verticalListSortingStrategy}>
+        <Grid {...rest}>{children}</Grid>
+      </SortableContext>
+    </DndContext>
+  )
+}
+
+function SortableListItem(props: ItemProps) {
+  const {id, children} = props
+  const {attributes, setNodeRef, transform, transition, active} = useSortable({id})
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  }
+  const isActive = id === active?.id
+  return (
+    <ListItem ref={setNodeRef} style={style} {...attributes} active={isActive}>
+      {children}
+    </ListItem>
+  )
+}
 
 interface ListProps extends ComponentProps<typeof Grid> {
   sortable?: boolean
   lockAxis?: 'x' | 'y' | 'xy'
   axis?: 'x' | 'y' | 'xy'
+  items: string[]
   onItemMove?: (event: {fromIndex: number; toIndex: number}) => void
   children?: React.ReactNode
   tabIndex?: number
@@ -44,20 +103,24 @@ export function List(props: ListProps) {
 
   // Note: this is here to make SortableList API compatible with onItemMove
   const handleSortEnd = useCallback(
-    (event: {newIndex: number; oldIndex: number}) =>
-      onItemMove?.({
-        fromIndex: event.oldIndex,
-        toIndex: event.newIndex,
-      }),
+    (event: {fromIndex: number; toIndex: number}) => onItemMove?.(event),
     [onItemMove]
   )
 
-  return sortable ? <SortableList onSortEnd={handleSortEnd} {...rest} /> : <Grid {...rest} />
+  return sortable ? <SortableList onItemMove={handleSortEnd} {...rest} /> : <Grid {...rest} />
 }
 
-type ItemProps = {sortable?: boolean; children?: React.ReactNode; index: number}
+interface ItemProps {
+  sortable?: boolean
+  children?: React.ReactNode
+  id: string
+}
 
 export function Item(props: ItemProps & ComponentProps<typeof Card>) {
   const {sortable, ...rest} = props
-  return sortable ? <SortableListItem {...rest} /> : <ListItem {...rest} />
+  return (
+    <SortableItemIdContext.Provider value={props.id}>
+      {sortable ? <SortableListItem {...rest} /> : <ListItem {...rest} />}
+    </SortableItemIdContext.Provider>
+  )
 }
