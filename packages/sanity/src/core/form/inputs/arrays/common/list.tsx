@@ -77,7 +77,7 @@ function SortableListItem(props: ItemProps) {
   const {attributes, setNodeRef, transform, transition, active} = useSortable({id})
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
   }
   const isActive = id === active?.id
