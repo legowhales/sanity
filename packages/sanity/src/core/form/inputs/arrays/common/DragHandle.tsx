@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import {Button, ButtonProps} from '@sanity/ui'
 import React, {useContext} from 'react'
 import {DragHandleIcon} from '@sanity/icons'
-import {DRAG_HANDLE_ATTRIBUTE} from './sortable'
 import {useSortable} from '@dnd-kit/sortable'
 
 const DragHandleButton = styled(Button)<{grid?: boolean}>`
@@ -10,8 +9,6 @@ const DragHandleButton = styled(Button)<{grid?: boolean}>`
 `
 
 export const SortableItemIdContext = React.createContext<string | null>(null)
-
-const DRAG_HANDLE_PROPS = {[DRAG_HANDLE_ATTRIBUTE]: true}
 
 export const DragHandle = function DragHandle(
   props: {
@@ -28,7 +25,6 @@ export const DragHandle = function DragHandle(
       data-ui="DragHandleButton"
       {...props}
       {...listeners}
-      {...DRAG_HANDLE_PROPS}
     />
   )
 }

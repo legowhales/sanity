@@ -175,10 +175,12 @@ export class ArrayOfPrimitivesInput extends React.PureComponent<ArrayOfPrimitive
               </Card>
             ) : (
               <Card padding={1} border>
-                <List onItemMove={this.handleSortEnd} sortable={isSortable} gap={1}>
+                <List onItemMove={this.handleSortEnd}                items={members.map((member) => member.key)}
+                      sortable={isSortable} gap={1}>
                   {members.map((member, index) => {
                     return (
-                      <Item key={member.key} sortable={isSortable} index={index}>
+                      <Item key={member.key}                        id={member.key}
+                            sortable={isSortable} index={index}>
                         {member.kind === 'item' && (
                           <ArrayOfPrimitivesItem
                             member={member}

@@ -24,19 +24,20 @@ import {
 } from '@dnd-kit/modifiers'
 import {SortableItemIdContext} from './DragHandle'
 
+const activeCss = css`
+  z-index: 10000;
+  /* prevents hover-effects etc on elements inside while reordering  */
+  pointer-events: none;
+  /* todo: this requires items to add this attr. Check if there's a better way */
+  [data-ui='Item'] {
+    box-shadow: 0 0 0 0, 0 8px 17px 2px var(--card-shadow-umbra-color),
+      0 3px 14px 2px var(--card-shadow-penumbra-color),
+      0 5px 5px -3px var(--card-shadow-ambient-color);
+  }
+`
+
 const ListItem = styled(Box)<ComponentProps<typeof Box> & {active?: boolean}>`
-  ${(props) =>
-    props.active
-      ? css`
-          z-index: 10000;
-          /* todo: this requires items to add this attr. Check if there's a better way */
-          [data-ui='Item'] {
-            box-shadow: 0 0 0 0, 0 8px 17px 2px var(--card-shadow-umbra-color),
-              0 3px 14px 2px var(--card-shadow-penumbra-color),
-              0 5px 5px -3px var(--card-shadow-ambient-color);
-          }
-        `
-      : ''}
+  ${(props) => props.active && activeCss}
 `
 
 function SortableList(props: ListProps) {
@@ -79,6 +80,7 @@ function SortableListItem(props: ItemProps) {
   const style = {
     transform: CSS.Translate.toString(transform),
     transition,
+    ...(active ? {pointerEvents: 'none' as const} : {}),
   }
   const isActive = id === active?.id
   return (
