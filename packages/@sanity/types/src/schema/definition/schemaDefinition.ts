@@ -15,7 +15,6 @@ import {
   ObjectDefinition,
   ReferenceDefinition,
   SlugDefinition,
-  SpanDefinition,
   StringDefinition,
   TextDefinition,
   UrlDefinition,
@@ -52,7 +51,6 @@ export interface IntrinsicDefinitions {
   reference: ReferenceDefinition
   crossDatasetReference: CrossDatasetReferenceDefinition
   slug: SlugDefinition
-  span: SpanDefinition
   string: StringDefinition
   text: TextDefinition
   url: UrlDefinition
