@@ -61,9 +61,9 @@ export type PortableTextEditorProps = PropsWithChildren<{
   onChange: (change: EditorChange) => void
 
   /**
-   * (Compiled or raw JSON) schema type for the portable text field
+   * Schema type for the portable text field
    */
-  type: ArraySchemaType<PortableTextBlock> | RawType
+  type: ArraySchemaType<PortableTextBlock>
 
   /**
    * Maximum number of blocks to allow within the editor
