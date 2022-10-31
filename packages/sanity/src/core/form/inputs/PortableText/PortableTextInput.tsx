@@ -1,10 +1,9 @@
-import {ArraySchemaType} from '@sanity/types'
+import {ArraySchemaType, PortableTextBlock} from '@sanity/types'
 import {
   EditorChange,
   OnCopyFn,
   OnPasteFn,
   Patch as EditorPatch,
-  PortableTextBlock,
   PortableTextEditor,
   HotkeyOptions,
   InvalidValue,

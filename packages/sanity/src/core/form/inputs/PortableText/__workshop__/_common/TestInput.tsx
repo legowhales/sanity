@@ -1,5 +1,5 @@
-import {PortableTextBlock, Type as PTType} from '@sanity/portable-text-editor'
-import {Path, ValidationMarker} from '@sanity/types'
+import {PortableTextBlock} from '@sanity/portable-text-editor'
+import {ArraySchemaType, Path, ValidationMarker} from '@sanity/types'
 import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import {PortableTextMarker, RenderCustomMarkers} from '../../../../types'
 import {applyAll} from '../../../../patch/simplePatch'
@@ -14,7 +14,7 @@ interface TestInputProps {
   renderBlockActions?: RenderBlockActionsCallback
   renderCustomMarkers?: RenderCustomMarkers
   // schema: Schema
-  type: PTType
+  type: ArraySchemaType
   value?: PortableTextBlock[]
   withError?: boolean
   withWarning?: boolean

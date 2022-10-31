@@ -1,12 +1,10 @@
 import {hues} from '@sanity/color'
 import {
-  PortableTextChild,
-  Type,
   RenderAttributes,
   PortableTextEditor,
   usePortableTextEditor,
 } from '@sanity/portable-text-editor'
-import {Path} from '@sanity/types'
+import {ObjectSchemaType, Path, PortableTextChild} from '@sanity/types'
 import React, {useCallback, useEffect, useMemo, useState} from 'react'
 import styled, {css} from 'styled-components'
 import {Box, Card, Theme, Tooltip} from '@sanity/ui'
@@ -28,7 +26,7 @@ interface InlineObjectProps {
   renderCustomMarkers?: RenderCustomMarkers
   renderPreview: RenderPreviewCallback
   scrollElement: HTMLElement | null
-  type: Type
+  type: ObjectSchemaType
   value: PortableTextChild
 }
 
