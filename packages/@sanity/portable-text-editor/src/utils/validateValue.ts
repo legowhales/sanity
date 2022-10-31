@@ -155,7 +155,7 @@ export function validateValue(
             resolution = {
               patches: spanChildren.map((child) => {
                 return set(
-                  child.marks.filter((cMrk) => !orphanedMarks.includes(cMrk)),
+                  (child.marks || []).filter((cMrk) => !orphanedMarks.includes(cMrk)),
                   [{_key: blk._key}, 'children', {_key: child._key}, 'marks']
                 )
               }),

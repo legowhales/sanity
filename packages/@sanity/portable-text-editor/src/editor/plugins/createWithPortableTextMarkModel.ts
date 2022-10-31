@@ -131,7 +131,7 @@ export function createWithPortableTextMarkModel(
               block.markDefs.length > 0 &&
               Text.isText(block.children[0]) &&
               block.children[0].text === '' &&
-              block.children[0].marks.length === 0
+              (!block.children[0].marks || block.children[0].marks.length === 0)
             ) {
               Transforms.setNodes(editor, {markDefs: []}, {at: blockPath})
               editor.onChange()

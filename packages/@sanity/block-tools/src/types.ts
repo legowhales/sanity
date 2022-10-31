@@ -2,6 +2,7 @@ import type {ComponentType} from 'react'
 import type {
   ArraySchemaType,
   ObjectSchemaType,
+  PortableTextObject,
   SpanSchemaType,
   TitledListValue,
 } from '@sanity/types'
@@ -80,7 +81,7 @@ export interface PlaceholderDecorator {
 
 export interface PlaceholderAnnotation {
   _type: '__annotation'
-  markDef: TypedObject
+  markDef: PortableTextObject
   children: TypedObject[]
 }
 
